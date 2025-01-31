@@ -46,7 +46,7 @@ html, body{
 }
 
 #introDiv{
-    width: 100vw;
+    width: 98vw;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -96,7 +96,7 @@ html, body{
 }
 
 #notesDiv{
-    width:100vw;
+    width:98vw;
     box-sizing: border-box;
     /*overflow: hidden;*/
     padding: 10px;
@@ -122,6 +122,7 @@ li {
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 98vw;
 }
 
 h2 {
@@ -437,4 +438,8 @@ a, a:visited{
 
 #buyMeACoffeeButton {
     font-size: 10px;
+}
+
+.x-link {
+    text-decoration: none;
 }
