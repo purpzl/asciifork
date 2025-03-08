@@ -120,9 +120,7 @@ var obj = {
     randomness: 15,
     invert: false,
     animationType: 'Random Text',
-    rotationAngle: 0 // Default rotation angle (0 degrees)
-    rotationLFOFrequency: 1,  // Frequency of LFO (how fast the rotation oscillates)
-    rotationLFOAmplitude: 30,  // Amplitude of LFO (how much the rotation oscillates)  
+    rotationAngle: 0 // Default rotation angle (0 degrees) 
 };
 
 var videoType = "Default";
@@ -176,8 +174,6 @@ gui.add(obj, "randomness").min(0).max(100).step(1).name('Randomness').onChange(r
 gui.add(obj, 'animationType', [ 'Random Text', 'User Text'] ).name('Text Type').onChange(refresh);
 gui.add(obj, "textInput").onFinishChange(refresh);
 gui.add(obj, "rotationAngle").min(0).max(360).step(1).name('Rotation').onChange(refresh);
-gui.add(obj, 'rotationLFOFrequency', 0.1, 10).name('LFO Frequency (Hz)');
-gui.add(obj, 'rotationLFOAmplitude', 0, 360).name('LFO Amplitude (degrees)');
 
 obj['pausePlay'] = function () {
     togglePausePlay();
