@@ -123,6 +123,113 @@ var obj = {
     rotationAngle: 0 // Default rotation angle (0 degrees) 
 };
 
+function savePreset(name) {
+    const preset = {
+        fontColor: obj.fontColor,
+        fontColor2: obj.fontColor2,
+        fontSizeFactor: obj.fontSizeFactor,
+        pixelSizeFactor: obj.pixelSizeFactor,
+        threshold: obj.threshold,
+        textInput: obj.textInput,
+        randomness: obj.randomness,
+        invert: obj.invert,
+        rotationAngle: obj.rotationAngle,
+        backgroundColor: obj.backgroundColor,
+        backgroundSaturation: obj.backgroundSaturation,
+        backgroundGradient: obj.backgroundGradient
+    };
+
+    // Get existing presets from localStorage or initialize as an empty object
+    let presets = JSON.parse(localStorage.getItem('asciiPresets')) || {};
+
+    // Add the new preset by name
+    presets[name] = preset;
+
+    // Save the updated presets list back to localStorage
+    localStorage.setItem('asciiPresets', JSON.stringify(presets));
+    alert('Preset Saved!');
+}
+
+// Step 2: Add the input field for preset name
+gui.add(obj, 'presetName').name('Preset Name').onFinishChange(refresh);
+
+// Step 3: Add the rest of the GUI controls
+gui.addColor(obj, "backgroundColor").name("Background Color").onFinishChange(refresh);
+gui.add(obj, "backgroundGradient").name('Bg Gradient?').onChange(refresh);
+gui.add(obj, "backgroundSaturation").min(0).max(100).step(1).name('Bg Saturation').onChange(refresh);
+gui.addColor(obj, "fontColor").name("Font Color").onFinishChange(refresh);
+gui.addColor(obj, "fontColor2").name("Font Color2").onFinishChange(refresh);
+gui.add(obj, "fontSizeFactor").min(0).max(10).step(1).name('Font Size Factor').onChange(refresh);
+// Add all your other controls...
+function savePreset(name) {
+    // Save the current settings (controls) to an object
+    const preset = {
+        fontColor: obj.fontColor,
+        fontColor2: obj.fontColor2,
+        fontSizeFactor: obj.fontSizeFactor,
+        pixelSizeFactor: obj.pixelSizeFactor,
+        threshold: obj.threshold,
+        textInput: obj.textInput,
+        randomness: obj.randomness,
+        invert: obj.invert,
+        rotationAngle: obj.rotationAngle,
+        backgroundColor: obj.backgroundColor,
+        backgroundSaturation: obj.backgroundSaturation,
+        backgroundGradient: obj.backgroundGradient
+    };
+
+    // Get existing presets from localStorage or initialize as an empty object
+    let presets = JSON.parse(localStorage.getItem('asciiPresets')) || {};
+
+    // Add the new preset by name
+    presets[name] = preset;
+
+    // Save the updated presets list back to localStorage
+    localStorage.setItem('asciiPresets', JSON.stringify(presets));
+    alert('Preset Saved!');
+}
+function loadPreset(name) {
+    let presets = JSON.parse(localStorage.getItem('asciiPresets')) || {};
+
+    if (presets[name]) {
+        const preset = presets[name];
+        obj.fontColor = preset.fontColor;
+        obj.fontColor2 = preset.fontColor2;
+        obj.fontSizeFactor = preset.fontSizeFactor;
+        obj.pixelSizeFactor = preset.pixelSizeFactor;
+        obj.threshold = preset.threshold;
+        obj.textInput = preset.textInput;
+        obj.randomness = preset.randomness;
+        obj.invert = preset.invert;
+        obj.rotationAngle = preset.rotationAngle;
+        obj.backgroundColor = preset.backgroundColor;
+        obj.backgroundSaturation = preset.backgroundSaturation;
+        obj.backgroundGradient = preset.backgroundGradient;
+        refresh();
+        alert('Preset Loaded!');
+    } else {
+        alert('Preset not found!');
+    }
+}
+gui.add({ savePreset: function () {
+    var presetName = obj.presetName; // Get preset name from the input field
+    if (presetName) {
+        savePreset(presetName); // Save the preset with the input name
+    } else {
+        alert('Please enter a preset name!');
+    }
+} }, 'savePreset').name('Save Preset');
+
+gui.add({ loadPreset: function () {
+    var presetName = obj.presetName; // Get preset name from the input field
+    if (presetName) {
+        loadPreset(presetName); // Load the preset by name
+    } else {
+        alert('Please enter a preset name!');
+    }
+} }, 'loadPreset').name('Load Preset');
+
+
 var videoType = "Default";
 var animationType = obj.animationType;
 
