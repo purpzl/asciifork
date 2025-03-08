@@ -121,8 +121,6 @@ var obj = {
     invert: false,
     animationType: 'Random Text',
     rotationAngle: 0 // Default rotation angle (0 degrees)
-
-    // Add LFO parameters here
     rotationLFOFrequency: 1,  // Frequency of LFO (how fast the rotation oscillates)
     rotationLFOAmplitude: 30,  // Amplitude of LFO (how much the rotation oscillates)  
 };
