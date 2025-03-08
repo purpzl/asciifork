@@ -982,3 +982,200 @@ setTimeout(function(){
 //MAIN METHOD
 refresh();
 startDefaultVideo();
+// LFO class to handle oscillation of control values
+class LFO {
+  constructor(min, max, rate, waveform = 'sine') {
+    this.min = min;
+    this.max = max;
+    this.rate = rate; // cycles per second
+    this.waveform = waveform; // 'sine', 'triangle', 'square', 'sawtooth'
+    this.startTime = Date.now();
+    this.enabled = false;
+  }
+
+  // Get current value based on oscillation
+  getValue() {
+    if (!this.enabled) return null;
+    
+    const elapsed = (Date.now() - this.startTime) / 1000;
+    const cycle = elapsed * this.rate;
+    const normalized = this.getNormalizedValue(cycle);
+    
+    // Map from [0,1] to [min,max]
+    return this.min + normalized * (this.max - this.min);
+  }
+  
+  getNormalizedValue(cycle) {
+    const position = cycle % 1; // Normalized position in cycle [0,1]
+    
+    switch(this.waveform) {
+      case 'sine':
+        return 0.5 + 0.5 * Math.sin(position * Math.PI * 2);
+      case 'triangle':
+        return position < 0.5 ? position * 2 : 2 - position * 2;
+      case 'square':
+        return position < 0.5 ? 0 : 1;
+      case 'sawtooth':
+        return position;
+      default:
+        return 0.5 + 0.5 * Math.sin(position * Math.PI * 2);
+    }
+  }
+  
+  enable() {
+    this.enabled = true;
+    this.startTime = Date.now();
+  }
+  
+  disable() {
+    this.enabled = false;
+  }
+  
+  toggle() {
+    this.enabled = !this.enabled;
+    if (this.enabled) this.startTime = Date.now();
+    return this.enabled;
+  }
+  
+  // Update parameters
+  setParams(min, max, rate, waveform) {
+    this.min = min !== undefined ? min : this.min;
+    this.max = max !== undefined ? max : this.max;
+    this.rate = rate !== undefined ? rate : this.rate;
+    this.waveform = waveform !== undefined ? waveform : this.waveform;
+  }
+}
+
+// Add LFO to each control
+function initLFOs() {
+  // Get all slider controls from the page
+  const controls = document.querySelectorAll('input[type="range"]');
+  
+  controls.forEach(control => {
+    // Create container for LFO controls
+    const controlContainer = control.parentElement;
+    const lfoContainer = document.createElement('div');
+    lfoContainer.className = 'lfo-container';
+    
+    // Get min, max from the slider
+    const min = parseFloat(control.min);
+    const max = parseFloat(control.max);
+    
+    // Create LFO instance for this control
+    control.lfo = new LFO(min, max, 0.1, 'sine');
+    
+    // Create toggle button
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = 'lfo-toggle';
+    toggleBtn.textContent = 'LFO';
+    toggleBtn.title = 'Toggle LFO';
+    toggleBtn.onclick = () => {
+      const enabled = control.lfo.toggle();
+      toggleBtn.classList.toggle('active', enabled);
+      
+      // Update wave and rate inputs visibility
+      waveSelect.style.display = enabled ? 'inline-block' : 'none';
+      rateInput.style.display = enabled ? 'inline-block' : 'none';
+    };
+    
+    // Create waveform selector
+    const waveSelect = document.createElement('select');
+    waveSelect.className = 'lfo-wave';
+    waveSelect.style.display = 'none';
+    ['sine', 'triangle', 'square', 'sawtooth'].forEach(wave => {
+      const option = document.createElement('option');
+      option.value = wave;
+      option.textContent = wave.charAt(0).toUpperCase() + wave.slice(1);
+      waveSelect.appendChild(option);
+    });
+    waveSelect.onchange = () => {
+      control.lfo.setParams(undefined, undefined, undefined, waveSelect.value);
+    };
+    
+    // Create rate input
+    const rateInput = document.createElement('input');
+    rateInput.className = 'lfo-rate';
+    rateInput.type = 'number';
+    rateInput.min = 0.01;
+    rateInput.max = 2;
+    rateInput.step = 0.01;
+    rateInput.value = 0.1;
+    rateInput.style.display = 'none';
+    rateInput.onchange = () => {
+      control.lfo.setParams(undefined, undefined, parseFloat(rateInput.value));
+    };
+    
+    // Add all elements to the container
+    lfoContainer.appendChild(toggleBtn);
+    lfoContainer.appendChild(waveSelect);
+    lfoContainer.appendChild(rateInput);
+    controlContainer.appendChild(lfoContainer);
+  });
+  
+  // Start animation loop to update controls
+  animateLFOs();
+}
+
+// Animation loop to update control values
+function animateLFOs() {
+  const controls = document.querySelectorAll('input[type="range"]');
+  
+  controls.forEach(control => {
+    if (control.lfo && control.lfo.enabled) {
+      const value = control.lfo.getValue();
+      control.value = value;
+      
+      // Trigger change event to update the ASCII
+      const event = new Event('input', { bubbles: true });
+      control.dispatchEvent(event);
+    }
+  });
+  
+  requestAnimationFrame(animateLFOs);
+}
+
+// Add CSS for LFO controls
+function addLFOStyles() {
+  const style = document.createElement('style');
+  style.textContent = `
+    .lfo-container {
+      display: inline-block;
+      margin-left: 10px;
+    }
+    
+    .lfo-toggle {
+      background: #444;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      padding: 3px 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    
+    .lfo-toggle.active {
+      background: #0088ff;
+    }
+    
+    .lfo-wave, .lfo-rate {
+      background: #333;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 3px;
+      padding: 2px 5px;
+      margin-left: 5px;
+      font-size: 12px;
+      width: 80px;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+// Initialize everything
+function initLFOSystem() {
+  addLFOStyles();
+  initLFOs();
+}
+
+// Call this when the page is loaded
+document.addEventListener('DOMContentLoaded', initLFOSystem);
