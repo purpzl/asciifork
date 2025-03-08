@@ -221,7 +221,20 @@ const render = (ctx) => {
 
         var pixelData = ctx2.getImageData(0, 0, canvasWidth, canvasHeight);
         var pixels = pixelData.data;
+        
+const adjustContrast = (pixels, contrast) => {
+    contrast = (contrast / 100) + 1;  // Convert percentage to multiplier
+    const intercept = 128 * (1 - contrast);
 
+    for (let i = 0; i < pixels.length; i += 4) {
+        pixels[i] = pixels[i] * contrast + intercept;     // Red
+        pixels[i + 1] = pixels[i + 1] * contrast + intercept; // Green
+        pixels[i + 2] = pixels[i + 2] * contrast + intercept; // Blue
+        // Alpha (pixels[i+3]) remains unchanged
+    }
+};
+
+        
         //new canvas with a pixelated image
         canvasPixel.width = canvasWidth;
         canvasPixel.height = canvasHeight;
