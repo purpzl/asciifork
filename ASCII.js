@@ -121,6 +121,13 @@ var obj = {
     invert: false,
     animationType: 'Random Text',
     rotationAngle: 0 // Default rotation angle (0 degrees) 
+    const contrastSlider = document.getElementById("contrastSlider");
+let userContrastValue = 0; // Default contrast level
+
+contrastSlider.addEventListener("input", () => {
+    userContrastValue = parseInt(contrastSlider.value);
+});
+
 };
 
 var videoType = "Default";
