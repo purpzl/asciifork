@@ -360,14 +360,52 @@ function renderText(){
     // Rotate the context based on the rotation angle from the slider
     ctx.rotate(obj.rotationAngle * Math.PI / 180); // Convert degrees to radians
 
-    // Set the fill style based on the gray value
-    ctx.fillStyle = interpolateHex(fontColor2, fontColor, (currentGrayValue / 255) / (1 - adjustedThreshold));
+// Declare rotation value and speed
+let rotationValue = 0;
+const rotationSpeed = 1; // Degrees to increment every interval
 
-    // Draw the rotated text
-    ctx.fillText(char, -pixelSize / 2, pixelSize / 2);
+// Function to automatically rotate the text
+function startAutomaticRotation() {
+    setInterval(() => {
+        rotationValue += rotationSpeed; // Increment the rotation angle
+        if (rotationValue >= 360) {
+            rotationValue = 0; // Reset to avoid overflow
+        }
+    }, 100); // Rotate every 100ms (adjust the speed)
+}
 
-    // Restore the context to its original state
-    ctx.restore();
+// Call the rotation function when you need it to start, e.g., when the page loads
+startAutomaticRotation();
+
+// Now start drawing text onto the canvas
+
+//draw text onto canvas
+ctx.font = currentFontSize + "px " + fontFamily;
+
+if (invertToggle == false) {
+    if (currentGrayValue / 255 > adjustedThreshold) {
+        if (currentGrayValue / 255 < (1 - adjustedThreshold)) {
+            // Save the context before rotating
+            ctx.save();
+
+            // Translate the context to the center of each character
+            ctx.translate(col * pixelSize + pixelSize / 2, row * pixelSize + pixelSize / 2);
+
+            // Rotate the context based on the automatically changing rotation angle
+            ctx.rotate(rotationValue * Math.PI / 180); // Convert degrees to radians
+
+            // Set the fill style based on the gray value
+            ctx.fillStyle = interpolateHex(fontColor2, fontColor, (currentGrayValue / 255) / (1 - adjustedThreshold));
+
+            // Draw the rotated text
+            ctx.fillText(char, -pixelSize / 2, pixelSize / 2);
+
+            // Restore the context to its original state
+            ctx.restore();
+        }
+    }
+}
+
 } else {
     // Set the fill style based on the other condition
     ctx.fillStyle = interpolateHex(fontColor, fontColor2, (currentGrayValue / 255 - adjustedThreshold) / (1 - adjustedThreshold));
@@ -1007,73 +1045,5 @@ setTimeout(function(){
 refresh();
 startDefaultVideo();
 
-// ---- Main Video Processing and ASCII Drawing Code ----
-
-// Your existing video processing, canvas drawing, and ASCII rendering functions...
-
-// ---- Start of Automatic ASCII Rotation Code -----
-
-let rotateValue = 0; // Rotation value
-const rotateSpeed = 1; // Speed at which the value changes
-const asciiChars = ['@', '#', 'S', '%', '?', '*', '+', ';', ':', ',', '.'];
-
-let isRotating = false; // Flag to track if rotation is active
-
-// Function to start the rotation
-function startRotation() {
-    if (!isRotating) { // Only start if it's not already rotating
-        isRotating = true;
-        rotateASCII(); // Start rotating
-    }
-}
-
-// Function to stop the rotation
-function stopRotation() {
-    isRotating = false; // Set to false to stop the rotation
-}
-
-// Function to rotate ASCII characters
-function rotateASCII() {
-    if (isRotating) { // Check if rotation is enabled
-        let charIndex = Math.floor(rotateValue % asciiChars.length);
-        let asciiChar = asciiChars[charIndex];
-
-        // Output the rotated ASCII character (you can print it in the console or display it in the page)
-        console.log(asciiChar);
-
-        // Increment rotate value
-        rotateValue += rotateSpeed;
-
-        // Continue rotating every 100 milliseconds as long as isRotating is true
-        setTimeout(rotateASCII, 100);
-    }
-}
-
-// Create buttons for Start and Stop Rotation
-const startButton = document.createElement('button');
-startButton.innerText = "Start Rotation";
-startButton.onclick = startRotation;
-document.body.appendChild(startButton);
-
-const stopButton = document.createElement('button');
-stopButton.innerText = "Stop Rotation";
-stopButton.onclick = stopRotation;
-document.body.appendChild(stopButton);
-
-// Ensure DOM is fully loaded before adding event listener
-document.addEventListener('DOMContentLoaded', () => {
-    // Optional: Toggle rotation using the 'r' key
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'r') { // Toggle with the 'r' key
-            if (isRotating) {
-                stopRotation(); // Stop if it's currently rotating
-            } else {
-                startRotation(); // Start if it's not rotating
-            }
-        }
-    });
-});
-
-// ----- End of Automatic ASCII Rotation Code -----
 
 
