@@ -357,8 +357,65 @@ function renderText(){
     // Translate the context to the center of each character
     ctx.translate(col * pixelSize + pixelSize / 2, row * pixelSize + pixelSize / 2);
 
-    // Rotate the context based on the rotation angle from the slider
-    ctx.rotate(obj.rotationAngle * Math.PI / 180); // Convert degrees to radians
+    // Define a global or higher-scope variable for automatic rotation speed
+let rotationSpeed = 1; // degrees per frame (adjust this value as needed)
+
+// Function to update rotation automatically
+function animateRotation() {
+    obj.rotationAngle += rotationSpeed;  // Increment the rotation angle
+    if (obj.rotationAngle >= 360) {  // Keep the angle within 0-360 degrees
+        obj.rotationAngle = 0;
+    }
+    requestAnimationFrame(animateRotation);  // Call the function again for the next frame
+}
+
+// Start the automatic rotation animation
+animateRotation();
+
+// Your drawing code that uses the automatic rotation:
+
+// Rotate the context based on the rotation angle from the slider or automatic rotation
+ctx.rotate(obj.rotationAngle * Math.PI / 180); // Convert degrees to radians
+
+// The rest of your drawing code:
+ctx.font = currentFontSize + "px " + fontFamily;
+
+if (invertToggle == false) {
+    if (currentGrayValue / 255 > adjustedThreshold) {
+        if (currentGrayValue / 255 < (1 - adjustedThreshold)) {
+            // Save the context before rotating
+            ctx.save();
+
+            // Translate the context to the center of each character
+            ctx.translate(col * pixelSize + pixelSize / 2, row * pixelSize + pixelSize / 2);
+
+            // Rotate the context based on the rotation angle (already updated by animateRotation)
+            ctx.rotate(obj.rotationAngle * Math.PI / 180); // Convert degrees to radians
+
+            // Set the fill style based on the gray value
+            ctx.fillStyle = interpolateHex(fontColor2, fontColor, (currentGrayValue / 255) / (1 - adjustedThreshold));
+
+            // Draw the rotated text at the new position
+            ctx.fillText(char, -pixelSize / 2, pixelSize / 2);
+
+            // Restore the context to its original state (after drawing)
+            ctx.restore();
+        } else {
+            // Set the fill style based on the other condition (when below the adjusted threshold)
+            ctx.fillStyle = interpolateHex(fontColor, fontColor2, (currentGrayValue / 255 - adjustedThreshold) / (1 - adjustedThreshold));
+
+            // Draw the text without rotation
+            ctx.fillText(char, col * pixelSize, row * pixelSize + pixelSize);
+        }
+    }
+} else {
+    // If invertToggle is true, draw the text without rotation and with the inverted color style
+    if (currentGrayValue / 255 < (1 - adjustedThreshold)) {
+        ctx.fillStyle = interpolateHex(fontColor2, fontColor, (currentGrayValue / 255) / (1 - adjustedThreshold));
+        ctx.fillText(char, col * pixelSize, row * pixelSize + pixelSize);
+    }
+}
+
 
     // Set the fill style based on the gray value
     ctx.fillStyle = interpolateHex(fontColor2, fontColor, (currentGrayValue / 255) / (1 - adjustedThreshold));
