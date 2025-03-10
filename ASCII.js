@@ -1006,3 +1006,38 @@ setTimeout(function(){
 //MAIN METHOD
 refresh();
 startDefaultVideo();
+// ----- Start of Automatic ASCII Rotation Code -----
+
+let rotateValue = 0; // Rotation value
+const rotateSpeed = 1; // Speed at which the value changes
+const asciiChars = ['@', '#', 'S', '%', '?', '*', '+', ';', ':', ',', '.'];
+
+let isRotating = false; // Flag to track if rotation is active
+
+// Function to start the rotation
+function startRotation() {
+    if (!isRotating) { // Only start if it's not already rotating
+        isRotating = true;
+        rotateASCII(); // Start rotating
+    }
+}
+
+// Function to stop the rotation
+function stopRotation() {
+    isRotating = false; // Set to false to stop the rotation
+}
+
+// Function to rotate ASCII characters
+function rotateASCII() {
+    if (isRotating) { // Check if rotation is enabled
+        let charIndex = Math.floor(rotateValue % asciiChars.length);
+        let asciiChar = asciiChars[charIndex];
+
+        // Output the rotated ASCII character (you can print it in the console or display it in the page)
+        console.log(asciiChar);
+
+        // Increment rotate value
+        rotateValue += rotateSpeed;
+
+        // Continue rotating every 100m
+
