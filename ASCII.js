@@ -210,57 +210,61 @@ const render = (ctx) => {
         canvasRaw.width = canvasWidth;
         canvasRaw.height = canvasHeight;
 
-        //choose video feed
-        if(videoType == "Webcam"){
-            ctx2.drawImage(webcamVideo, 0, 0, canvasWidth, canvasHeight);
-        } else if(videoType == "Select Video"){
-            ctx2.drawImage(userVideo, 0, 0, canvasWidth, canvasHeight);
-        }  else if(videoType == "Default"){
-            ctx2.drawImage(defaultVideo, 0, 0, canvasWidth, canvasHeight);
-        } 
+        // Function to update canvas based on slider values and convert to ASCII
+function updateCanvas() {
+    // Apply brightness and contrast filters to the canvas
+    ctx2.filter = `brightness(${brightnessValue}) contrast(${contrastValue})`;
 
-        // Apply brightness and contrast filters before getting pixel data
-ctx2.filter = `brightness(${brightnessValue}) contrast(${contrastValue})`;
-        
-        var pixelData = ctx2.getImageData(0, 0, canvasWidth, canvasHeight);
-        var pixels = pixelData.data;
+    // Redraw the video onto the canvas based on video type
+    if (videoType == "Webcam") {
+        ctx2.drawImage(webcamVideo, 0, 0, canvasWidth, canvasHeight);
+    } else if (videoType == "Select Video") {
+        ctx2.drawImage(userVideo, 0, 0, canvasWidth, canvasHeight);
+    } else if (videoType == "Default") {
+        ctx2.drawImage(defaultVideo, 0, 0, canvasWidth, canvasHeight);
+    }
 
-        // 3. Call the ASCII conversion function
-convertToASCII();
+    // Get updated pixel data from the canvas
+    const pixelData = ctx2.getImageData(0, 0, canvasWidth, canvasHeight);
+    const pixels = pixelData.data;
+
+    // Convert the pixels to ASCII and display the result
+    convertToASCII(pixels);
+}
 
 // Function to convert pixels to ASCII
-function convertToASCII() {
+function convertToASCII(pixels) {
     let asciiArt = '';
     for (let i = 0; i < pixels.length; i += 4) {
         let r = pixels[i];
         let g = pixels[i + 1];
         let b = pixels[i + 2];
 
-        // Calculate brightness
+        // Calculate brightness using the standard formula
         let brightness = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-        
-        // Map brightness to ASCII
+
+        // Map brightness to an ASCII character
         let asciiChar = mapBrightnessToASCII(brightness);
         asciiArt += asciiChar;
 
-        // Add line breaks to form a grid
+        // Add line breaks to format the ASCII art as a grid
         if (i / 4 % canvasWidth === 0) {
             asciiArt += '\n';
         }
     }
 
-    // Display the ASCII art
+    // Display the generated ASCII art in the HTML
     displayASCII(asciiArt);
 }
 
 // Function to map brightness to ASCII characters
 function mapBrightnessToASCII(brightness) {
     const asciiChars = ['@', '#', 'S', '%', '?', '*', '+', ';', ':', ',', '.'];
-    const index = Math.floor(brightness / 25.5);
+    const index = Math.floor(brightness / 25.5); // Mapping brightness to 0 to 10 index range
     return asciiChars[index];
 }
 
-// Function to display ASCII in HTML
+// Function to display the ASCII art in the HTML
 function displayASCII(asciiArt) {
     document.getElementById('asciiOutput').textContent = asciiArt;
 }
