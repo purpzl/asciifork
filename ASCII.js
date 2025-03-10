@@ -1069,8 +1069,69 @@ let contrastValue = 1;
 // Listen for slider changes
 brightnessSlider.addEventListener('input', () => {
     brightnessValue = brightnessSlider.value;
+    updateCanvas(); // Update canvas when slider changes
 });
 
 contrastSlider.addEventListener('input', () => {
     contrastValue = contrastSlider.value;
+    updateCanvas(); // Update canvas when slider changes
 });
+
+// Function to update canvas based on slider values and convert to ASCII
+function updateCanvas() {
+    // Apply brightness and contrast filters to the canvas
+    ctx2.filter = `brightness(${brightnessValue}) contrast(${contrastValue})`;
+
+    // Redraw the video onto the canvas
+    if (videoType == "Webcam") {
+        ctx2.drawImage(webcamVideo, 0, 0, canvasWidth, canvasHeight);
+    } else if (videoType == "Select Video") {
+        ctx2.drawImage(userVideo, 0, 0, canvasWidth, canvasHeight);
+    } else if (videoType == "Default") {
+        ctx2.drawImage(defaultVideo, 0, 0, canvasWidth, canvasHeight);
+    }
+
+    // Get updated pixel data from canvas
+    const pixelData = ctx2.getImageData(0, 0, canvasWidth, canvasHeight);
+    const pixels = pixelData.data;
+
+    // Convert the pixels to ASCII
+    convertToASCII(pixels);
+}
+
+// Function to convert pixels to ASCII
+function convertToASCII(pixels) {
+    let asciiArt = '';
+    for (let i = 0; i < pixels.length; i += 4) {
+        let r = pixels[i];
+        let g = pixels[i + 1];
+        let b = pixels[i + 2];
+
+        // Calculate brightness
+        let brightness = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
+        // Map brightness to ASCII
+        let asciiChar = mapBrightnessToASCII(brightness);
+        asciiArt += asciiChar;
+
+        // Add line breaks to form a grid
+        if (i / 4 % canvasWidth === 0) {
+            asciiArt += '\n';
+        }
+    }
+
+    // Display the ASCII art in HTML
+    displayASCII(asciiArt);
+}
+
+// Function to map brightness to ASCII characters
+function mapBrightnessToASCII(brightness) {
+    const asciiChars = ['@', '#', 'S', '%', '?', '*', '+', ';', ':', ',', '.'];
+    const index = Math.floor(brightness / 25.5); // 0 to 10 based on brightness
+    return asciiChars[index];
+}
+
+// Function to display ASCII in HTML
+function displayASCII(asciiArt) {
+    document.getElementById('asciiOutput').textContent = asciiArt;
+}
