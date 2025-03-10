@@ -1006,3 +1006,73 @@ setTimeout(function(){
 //MAIN METHOD
 refresh();
 startDefaultVideo();
+
+// ----- Start of Automatic ASCII Rotation Code -----
+
+// Your preset functions will go here
+// Save current settings as a preset
+function saveSettings() {
+    const presetName = prompt("Enter a name for this preset:");
+    if (!presetName) {
+        alert("Preset name is required!");
+        return;
+    }
+
+    const settings = {
+        brightness: brightnessValue,
+        contrast: contrastValue,
+        fontSize: currentFontSize,
+        fontFamily: fontFamily,
+        rotationAngle: obj.rotationAngle,
+    };
+
+    let presets = JSON.parse(localStorage.getItem('asciiPresets')) || {};
+    presets[presetName] = settings;
+    localStorage.setItem('asciiPresets', JSON.stringify(presets));
+
+    console.log('Preset saved!');
+    updatePresetList();
+}
+
+// Update the preset list in the UI
+function updatePresetList() {
+    const presetListContainer = document.getElementById('presetList');
+    presetListContainer.innerHTML = '';
+
+    const presets = JSON.parse(localStorage.getItem('asciiPresets')) || {};
+    for (const presetName in presets) {
+        const presetButton = document.createElement('button');
+        presetButton.innerText = presetName;
+        presetButton.onclick = () => loadPreset(presetName);
+        presetListContainer.appendChild(presetButton);
+    }
+}
+
+// Load a preset and apply its settings
+function loadPreset(presetName) {
+    const presets = JSON.parse(localStorage.getItem('asciiPresets')) || {};
+    const preset = presets[presetName];
+
+    if (!preset) {
+        alert('Preset not found!');
+        return;
+    }
+
+    brightnessValue = preset.brightness;
+    contrastValue = preset.contrast;
+    currentFontSize = preset.fontSize;
+    fontFamily = preset.fontFamily;
+    obj.rotationAngle = preset.rotationAngle;
+
+    document.getElementById('brightnessSlider').value = brightnessValue;
+    document.getElementById('contrastSlider').value = contrastValue;
+
+    updateCanvas();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    updatePresetList();
+});
+
+// ----- End of Automatic ASCII Rotation Code -----
+
