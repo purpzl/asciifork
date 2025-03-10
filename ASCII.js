@@ -1006,6 +1006,7 @@ setTimeout(function(){
 //MAIN METHOD
 refresh();
 startDefaultVideo();
+
 // ----- Start of Automatic ASCII Rotation Code -----
 
 let rotateValue = 0; // Rotation value
