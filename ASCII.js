@@ -1007,7 +1007,11 @@ setTimeout(function(){
 refresh();
 startDefaultVideo();
 
-// ----- Start of Automatic ASCII Rotation Code -----
+// ---- Main Video Processing and ASCII Drawing Code ----
+
+// Your existing video processing, canvas drawing, and ASCII rendering functions...
+
+// ---- Start of Automatic ASCII Rotation Code -----
 
 let rotateValue = 0; // Rotation value
 const rotateSpeed = 1; // Speed at which the value changes
@@ -1040,5 +1044,36 @@ function rotateASCII() {
         // Increment rotate value
         rotateValue += rotateSpeed;
 
-        // Continue rotating every 100m
+        // Continue rotating every 100 milliseconds as long as isRotating is true
+        setTimeout(rotateASCII, 100);
+    }
+}
+
+// Create buttons for Start and Stop Rotation
+const startButton = document.createElement('button');
+startButton.innerText = "Start Rotation";
+startButton.onclick = startRotation;
+document.body.appendChild(startButton);
+
+const stopButton = document.createElement('button');
+stopButton.innerText = "Stop Rotation";
+stopButton.onclick = stopRotation;
+document.body.appendChild(stopButton);
+
+// Ensure DOM is fully loaded before adding event listener
+document.addEventListener('DOMContentLoaded', () => {
+    // Optional: Toggle rotation using the 'r' key
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'r') { // Toggle with the 'r' key
+            if (isRotating) {
+                stopRotation(); // Stop if it's currently rotating
+            } else {
+                startRotation(); // Start if it's not rotating
+            }
+        }
+    });
+});
+
+// ----- End of Automatic ASCII Rotation Code -----
+
 
