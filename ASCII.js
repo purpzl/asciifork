@@ -399,17 +399,33 @@ if (invertToggle == false) {
             // Translate the context to the center of each character
             ctx.translate(col * pixelSize + pixelSize / 2, row * pixelSize + pixelSize / 2);
 
-            // Rotate the context based on the rotation angle (already updated by animateRotation)
-            ctx.rotate(obj.rotationAngle * Math.PI / 180); // Convert degrees to radians
+           // Save the current state of the canvas
+ctx.save();
 
-            // Set the fill style based on the gray value
-            ctx.fillStyle = interpolateHex(fontColor2, fontColor, (currentGrayValue / 255) / (1 - adjustedThreshold));
+// Translate the context to the center of the canvas (or a specific region if needed)
+ctx.translate(canvas.width / 2, canvas.height / 2);  // Center of the canvas, or use a region
 
-            // Draw the rotated text at the new position
-            ctx.fillText(char, -pixelSize / 2, pixelSize / 2);
+// Rotate the entire canvas context by the desired angle
+ctx.rotate(obj.rotationAngle * Math.PI / 180); // Rotate by the angle from the slider
 
-            // Restore the context to its original state (after drawing)
-            ctx.restore();
+// Now draw all elements that need to be rotated (such as multiple text elements)
+// These elements will all inherit the same rotation angle.
+for (let col = 0; col < numCols; col++) {
+    for (let row = 0; row < numRows; row++) {
+        let char = getCharByScale(currentGrayValue);
+        
+        // Set text style based on conditions
+        ctx.font = currentFontSize + "px " + fontFamily;
+        ctx.fillStyle = interpolateHex(fontColor2, fontColor, (currentGrayValue / 255) / (1 - adjustedThreshold));
+
+        // Draw each character at its respective position
+        ctx.fillText(char, col * pixelSize - canvas.width / 2, row * pixelSize - canvas.height / 2);  // Adjust for the translation
+    }
+}
+
+// Restore the canvas context to its original state
+ctx.restore();
+
         } else {
             // Set the fill style based on the other condition (when below the adjusted threshold)
             ctx.fillStyle = interpolateHex(fontColor, fontColor2, (currentGrayValue / 255 - adjustedThreshold) / (1 - adjustedThreshold));
