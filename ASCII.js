@@ -357,15 +357,25 @@ function renderText(){
     // Translate the context to the center of each character
     ctx.translate(col * pixelSize + pixelSize / 2, row * pixelSize + pixelSize / 2);
 
-    // Define a global or higher-scope variable for automatic rotation speed
+  // Define a global or higher-scope variable for automatic rotation speed
 let rotationSpeed = 1; // degrees per frame (adjust this value as needed)
+
+// Variable to track the frame count
+let frameCount = 0;
+let framesBetweenUpdates = 5;  // Update the rotation angle every 5 frames
 
 // Function to update rotation automatically
 function animateRotation() {
-    obj.rotationAngle += rotationSpeed;  // Increment the rotation angle
-    if (obj.rotationAngle >= 360) {  // Keep the angle within 0-360 degrees
-        obj.rotationAngle = 0;
+    frameCount++;  // Increment the frame counter
+    
+    // Update the rotation angle every N frames (e.g., every 5th frame)
+    if (frameCount % framesBetweenUpdates === 0) {  
+        obj.rotationAngle += rotationSpeed;  // Increment the rotation angle
+        if (obj.rotationAngle >= 360) {  // Keep the angle within 0-360 degrees
+            obj.rotationAngle = 0;
+        }
     }
+
     requestAnimationFrame(animateRotation);  // Call the function again for the next frame
 }
 
@@ -377,7 +387,7 @@ animateRotation();
 // Rotate the context based on the rotation angle from the slider or automatic rotation
 ctx.rotate(obj.rotationAngle * Math.PI / 180); // Convert degrees to radians
 
-// The rest of your drawing code:
+// Your existing code for drawing text and other elements:
 ctx.font = currentFontSize + "px " + fontFamily;
 
 if (invertToggle == false) {
@@ -415,6 +425,7 @@ if (invertToggle == false) {
         ctx.fillText(char, col * pixelSize, row * pixelSize + pixelSize);
     }
 }
+
 
 
     // Set the fill style based on the gray value
