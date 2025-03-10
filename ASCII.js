@@ -362,7 +362,7 @@ let rotationSpeed = 1; // degrees per frame (adjust this value as needed)
 
 // Variable to track the frame count
 let frameCount = 0;
-let framesBetweenUpdates = 5;  // Update the rotation angle every 5 frames
+let framesBetweenUpdates = 10;  // Update the rotation angle every 5 frames
 
 // Function to update rotation automatically
 function animateRotation() {
