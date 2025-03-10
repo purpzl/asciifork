@@ -38,6 +38,18 @@
         <div id="effectWidthDiv">
             <pre><span class="tableText" id="effectWidthLabel">Effect Width</span><br><input class="input-number-noSpinners" type="range" id="effectWidthInput" value="50" min="0" max="100"></pre>
         </div>
+ 
+    <!-- Brightness Slider -->
+    <div>
+        <label for="brightnessSlider">Brightness</label>
+        <input type="range" id="brightnessSlider" min="0" max="2" step="0.01" value="1">
+    </div>
+
+    <!-- Contrast Slider -->
+    <div>
+        <label for="contrastSlider">Contrast</label>
+        <input type="range" id="contrastSlider" min="0" max="2" step="0.01" value="1">
+    </div>
 
         <canvas id="canvas" class=""></canvas>
         <video id="webcamVideo" class=" hidden" playsinline></video>
