@@ -106,7 +106,7 @@ if(ua.includes("Android")){
 }
 console.log("isSafari: "+isSafari+", isFirefox: "+isFirefox+", isIOS: "+isIOS+", isAndroid: "+isAndroid);
 
-//CREATE USER GUI MENU
+// CREATE USER GUI MENU
 var obj = {
     backgroundColor: "#080c37",
     backgroundGradient: true,
@@ -120,8 +120,92 @@ var obj = {
     randomness: 15,
     invert: false,
     animationType: 'Random Text',
-    rotationAngle: 0 // Default rotation angle (0 degrees) 
+    rotationAngle: 0 // Default rotation angle (0 degrees)
 };
+
+// Save current settings as a preset
+function saveSettings() {
+    const presetName = prompt("Enter a name for this preset:");
+    if (!presetName) {
+        alert("Preset name is required!");
+        return;
+    }
+
+    const settings = { ...obj };  // Clone the current settings object
+
+    // Retrieve saved presets from localStorage, or initialize an empty object
+    let presets = JSON.parse(localStorage.getItem('asciiPresets')) || {};
+    presets[presetName] = settings;
+
+    // Save updated presets back to localStorage
+    localStorage.setItem('asciiPresets', JSON.stringify(presets));
+
+    console.log('Preset saved!');
+    updatePresetList();
+}
+
+// Update the preset list in the UI
+function updatePresetList() {
+    const presetListContainer = document.getElementById('presetList');
+    presetListContainer.innerHTML = '';  // Clear existing preset list
+
+    // Retrieve saved presets from localStorage
+    const presets = JSON.parse(localStorage.getItem('asciiPresets')) || {};
+    for (const presetName in presets) {
+        const presetButton = document.createElement('button');
+        presetButton.innerText = presetName;
+        presetButton.onclick = () => loadPreset(presetName); // Set function to load preset
+        presetListContainer.appendChild(presetButton);
+    }
+}
+
+// Load a preset and apply its settings
+function loadPreset(presetName) {
+    const presets = JSON.parse(localStorage.getItem('asciiPresets')) || {};
+    const preset = presets[presetName];
+
+    if (!preset) {
+        alert('Preset not found!');
+        return;
+    }
+
+    // Apply preset settings to `obj`
+    obj.backgroundColor = preset.backgroundColor;
+    obj.backgroundGradient = preset.backgroundGradient;
+    obj.backgroundSaturation = preset.backgroundSaturation;
+    obj.fontColor = preset.fontColor;
+    obj.fontColor2 = preset.fontColor2;
+    obj.fontSizeFactor = preset.fontSizeFactor;
+    obj.pixelSizeFactor = preset.pixelSizeFactor;
+    obj.threshold = preset.threshold;
+    obj.textInput = preset.textInput;
+    obj.randomness = preset.randomness;
+    obj.invert = preset.invert;
+    obj.animationType = preset.animationType;
+    obj.rotationAngle = preset.rotationAngle;
+
+    // Update your GUI with the preset settings
+    updateGUI();
+
+    console.log('Preset loaded:', presetName);
+}
+
+// Function to update your GUI with the loaded settings
+function updateGUI() {
+    // Example: Set input fields, sliders, and other elements based on `obj`
+    document.getElementById('backgroundColor').value = obj.backgroundColor;
+    document.getElementById('fontColor').value = obj.fontColor;
+    document.getElementById('fontSizeFactor').value = obj.fontSizeFactor;
+    document.getElementById('rotationAngleSlider').value = obj.rotationAngle;
+
+    // You can add more UI elements here based on your existing controls
+}
+
+// Load the preset list after the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    updatePresetList();
+});
+
 
 var videoType = "Default";
 var animationType = obj.animationType;
@@ -1006,103 +1090,3 @@ setTimeout(function(){
 //MAIN METHOD
 refresh();
 startDefaultVideo();
-
-// Global variables (ensure these are initialized in your script or use placeholders if needed)
-let brightnessValue = 1;
-let contrastValue = 1;
-let currentFontSize = 16; // Example font size
-let fontFamily = 'Arial'; // Example font family
-let obj = { rotationAngle: 0 }; // Example object with rotation angle
-
-// Save current settings as a preset
-function saveSettings() {
-    const presetName = prompt("Enter a name for this preset:");
-    if (!presetName) {
-        alert("Preset name is required!");
-        return;
-    }
-
-    const settings = {
-        brightness: brightnessValue,
-        contrast: contrastValue,
-        fontSize: currentFontSize,
-        fontFamily: fontFamily,
-        rotationAngle: obj.rotationAngle,
-    };
-
-    // Retrieve saved presets from localStorage, or initialize an empty object
-    let presets = JSON.parse(localStorage.getItem('asciiPresets')) || {};
-    presets[presetName] = settings;
-
-    // Save updated presets back to localStorage
-    localStorage.setItem('asciiPresets', JSON.stringify(presets));
-
-    console.log('Preset saved!');
-    updatePresetList();
-}
-
-// Update the preset list in the UI
-function updatePresetList() {
-    const presetListContainer = document.getElementById('presetList');
-    presetListContainer.innerHTML = ''; // Clear existing preset list
-
-    // Retrieve saved presets from localStorage
-    const presets = JSON.parse(localStorage.getItem('asciiPresets')) || {};
-    for (const presetName in presets) {
-        const presetButton = document.createElement('button');
-        presetButton.innerText = presetName;
-        presetButton.onclick = () => loadPreset(presetName); // Set function to load preset
-        presetListContainer.appendChild(presetButton);
-    }
-}
-
-// Load a preset and apply its settings
-function loadPreset(presetName) {
-    const presets = JSON.parse(localStorage.getItem('asciiPresets')) || {};
-    const preset = presets[presetName];
-
-    if (!preset) {
-        alert('Preset not found!');
-        return;
-    }
-
-    // Apply preset settings
-    brightnessValue = preset.brightness;
-    contrastValue = preset.contrast;
-    currentFontSize = preset.fontSize;
-    fontFamily = preset.fontFamily;
-    obj.rotationAngle = preset.rotationAngle;
-
-    // Update the sliders with preset values
-    document.getElementById('brightnessSlider').value = brightnessValue;
-    document.getElementById('contrastSlider').value = contrastValue;
-
-    // Update the canvas with the new preset settings
-    updateCanvas();
-}
-
-// Function to update canvas based on current settings (make sure this exists in your script)
-function updateCanvas() {
-    // Example of how the canvas might be updated with the new settings
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Here, apply brightness, contrast, font size, etc. to the canvas drawing
-    ctx.font = `${currentFontSize}px ${fontFamily}`;
-    // Apply brightness and contrast if applicable (you might need custom code for this)
-    ctx.filter = `brightness(${brightnessValue}) contrast(${contrastValue})`;
-
-    // Call any functions to render your ASCII or canvas content here
-    // Example: renderASCIIArt(ctx);
-
-    console.log('Canvas updated with preset settings.');
-}
-
-// Load the preset list after the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    updatePresetList();
-});
-
-// ----- End of Automatic ASCII Rotation Code -----
-
