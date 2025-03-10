@@ -112,21 +112,21 @@
     </div>
 
 
-    <!-- Section for Preset Controls -->
-    <div id="presetContainer">
-        <h3>Saved Presets</h3>
-        <div id="presetList">
-            <!-- Presets will be dynamically loaded here -->
-        </div>
-        <button onclick="saveSettings()">Save Current Settings</button>
+<!-- Preset Controls Section -->
+<div id="presetContainer">
+    <h3>Saved Presets</h3>
+    <div id="presetList">
+        <!-- Presets will be displayed here -->
     </div>
+    <button onclick="saveSettings()">Save Current Settings</button>
+</div>
 
-    <script src="ASCII.js"></script>
-    <script src="mp4-muxer-main/build/mp4-muxer.js"></script>
-    <script src="main.js"></script> <!-- Your main JS file -->
-
-</body>
-</html>
+<!-- Your existing controls (example) -->
+<input type="color" id="backgroundColor" value="#080c37">
+<input type="color" id="fontColor" value="#c7205b">
+<input type="number" id="fontSizeFactor" value="3">
+<input type="range" id="rotationAngleSlider" value="0" min="0" max="360">
+<!-- Add other controls like sliders, text inputs, etc. -->
 
 </body>
 </html>
