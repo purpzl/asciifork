@@ -402,6 +402,10 @@ function loop(){
         render(ctx);
 
         if(effectWidth < 1){
+
+            // Apply brightness & contrast before drawing the video
+ctx.filter = `brightness(${brightnessValue}) contrast(${contrastValue})`;
+            
             //draw the chosen video onto the final canvas
             if(videoType == "Webcam"){
                 ctx.drawImage(webcamVideo, 0, 0, canvasWidth, canvasHeight);
@@ -410,6 +414,9 @@ function loop(){
             }  else if(videoType == "Default"){
                 ctx.drawImage(defaultVideo, 0, 0, canvasWidth, canvasHeight);
             }
+       // Reset filter after drawing
+ctx.filter = 'none';
+        
         }
 
         renderText();
@@ -1006,3 +1013,21 @@ setTimeout(function(){
 //MAIN METHOD
 refresh();
 startDefaultVideo();
+
+// ----- Add slider-related code below this -----
+
+// Get slider elements
+const brightnessSlider = document.getElementById('brightnessSlider');
+const contrastSlider = document.getElementById('contrastSlider');
+
+let brightnessValue = 1;
+let contrastValue = 1;
+
+// Listen for slider changes
+brightnessSlider.addEventListener('input', () => {
+    brightnessValue = brightnessSlider.value;
+});
+
+contrastSlider.addEventListener('input', () => {
+    contrastValue = contrastSlider.value;
+});
