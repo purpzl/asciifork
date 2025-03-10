@@ -203,13 +203,6 @@ useWebcamButton.addEventListener("click",function(){
     changeVideoType();
 });
 
-
-//turn video input into still images, and then into pixelated grayscale values
-const render = (ctx) => {
-    if (canvasWidth && canvasHeight) {
-        canvasRaw.width = canvasWidth;
-        canvasRaw.height = canvasHeight;
-
         // Function to update canvas based on slider values and convert to ASCII
 function updateCanvas() {
     // Apply brightness and contrast filters to the canvas
@@ -268,6 +261,11 @@ function mapBrightnessToASCII(brightness) {
 function displayASCII(asciiArt) {
     document.getElementById('asciiOutput').textContent = asciiArt;
 }
+//turn video input into still images, and then into pixelated grayscale values
+const render = (ctx) => {
+    if (canvasWidth && canvasHeight) {
+        canvasRaw.width = canvasWidth;
+        canvasRaw.height = canvasHeight;
 
         //new canvas with a pixelated image
         canvasPixel.width = canvasWidth;
